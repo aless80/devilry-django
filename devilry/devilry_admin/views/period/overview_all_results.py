@@ -219,7 +219,7 @@ class App(crapp.App):
                   RelatedStudentsAllResultsOverview.as_view(),
                   name='filter'),
         crapp.Url(r'^download-report$',
-                  DownloadAnonymizedReportView.as_view(),
+                  DownloadReportView.as_view(),
                   name='download_report'),
         crapp.Url(r'^download-anonymized-report$',
                   DownloadAnonymizedReportView.as_view(),
