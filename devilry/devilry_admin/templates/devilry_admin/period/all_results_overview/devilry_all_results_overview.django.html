@@ -69,6 +69,11 @@
                 <input type="hidden" name="report_options" value="{{ report_options }}">
                 <input class="btn btn-primary" type="submit" name="confirm" value="{% trans "Download results" %}"/>
             </form>
+            <form action="{% cradmin_appurl 'download_anonymized_report' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="report_options" value="{{ report_options }}">
+                <input class="btn btn-primary" type="submit" name="confirm" value="{% trans "Download anonymized results" %}"/>
+            </form>
         </div>
     </div>
     {{ block.super }}
