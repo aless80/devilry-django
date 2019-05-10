@@ -9,32 +9,27 @@ from devilry.devilry_email.utils import activate_translation_for_user
 from devilry.devilry_report.abstract_generator import AbstractExcelReportGenerator
 from devilry.apps.core.models import RelatedStudent, Assignment, Period
 
-class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
+#ALE copied from all_results_generator.py
+class AnonymizedResultsExcelReportGenerator(AbstractExcelReportGenerator):
     """
     Generates a downloadable Excel spreadsheet of all current student results.
     """
     def __init__(self, *args, **kwargs):
-        print('@__init__ AllResultsExcelReportGenerator')
-        super(AllResultsExcelReportGenerator, self).__init__(*args, **kwargs)
+        super(AnonymizedResultsExcelReportGenerator, self).__init__(*args, **kwargs)
         self.period = Period.objects.get(id=self.generator_options['period_id'])
 
     @property
     def generator_options(self):
-        print('@get_generator_type')
-        print('self.devilry_report.generator_options',self.devilry_report.generator_options)
         return self.devilry_report.generator_options
 
     @classmethod
     def get_generator_type(cls):
-        print('@get_generator_type')
-        return 'semesterstudentresults'
+        return 'semesterstudentanonymizedresults'
 
     def get_output_filename_prefix(self):
-        print('@get_output_filename_prefix')
         return '{}'.format(self.period.short_name)
 
     def get_object_iterable(self):
-        print('@get_object_iterable')
         related_student_queryset = RelatedStudent.objects \
             .filter(period=self.period)
         related_student_ids = [relatedstudent.id for relatedstudent in related_student_queryset]
@@ -46,13 +41,10 @@ class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
         """
         Fetch all assignments for the period.
         """
-        print('@__get_all_assignments_for_period')
         return Assignment.objects.prefetch_point_to_grade_map()\
             .filter(parentnode_id=self.period.id)
 
     def add_worksheet_headers(self, worksheet):
-        print('')
-        print('@add_worksheet_headers')
         worksheet.write(0, 0, pgettext('devilry report semesters student results', 'Student'), self.header_cell_format)
 
         column_count = 1
@@ -61,7 +53,6 @@ class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
             column_count += 1
 
     def __get_student_status(self, related_student_result, assignment):
-        print('@__get_student_status')
         if not related_student_result.student_is_registered_on_assignment(assignment.id):
             return pgettext('devilry report semesters assignment status', 'Not registered')
         elif related_student_result.is_waiting_for_deliveries(assignment.id):
@@ -76,21 +67,12 @@ class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
         """
         Write data to "Grades"-worksheet.
         """
-        print('@__write_data_to_grades_worksheet')
-        print('obj {} {}'.format(obj, dir(obj)))
-        print('obj.relatedstudent {}'.format(dir(obj.relatedstudent)))
-        print('obj.relatedstudent.user {}'.format(dir(obj.relatedstudent.user)))
-        print('obj.relatedstudent.user {}'.format(vars(obj.relatedstudent.user)))
-        
         for assignment in self.__get_all_assignments_for_period().order_by('first_deadline'):
-            print(row,column,assignment)
             result = self.__get_student_status(related_student_result=obj, assignment=assignment)
             if result:
                 worksheet.write(row, column, result)
-                print(result)
             else:
                 points = obj.get_result_for_assignment(assignment.id)
-                print('{}'.format(assignment.points_to_grade(points=points)))
                 worksheet.write(row, column, '{}'.format(assignment.points_to_grade(points=points)))
             column += 1
 
@@ -125,12 +107,9 @@ class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
             column += 1
 
     def write_data_to_worksheet(self, worksheet_tuple, row, column, obj):
-        print('@write_data_to_worksheet')
         worksheet_type = worksheet_tuple[0]
         worksheet = worksheet_tuple[1]
-        print(row, column, obj.relatedstudent.user.get_short_name())
-        #worksheet.write(row, column, obj.relatedstudent.user.get_short_name()) #ALE 
-        worksheet.write(row, column, 'student_{:0>3d}'.format(row))
+        worksheet.write(row, column, obj.relatedstudent.user.get_short_name())
         column = 1
 
         if worksheet_type == 'grades':
@@ -141,7 +120,6 @@ class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
             self.__write_data_to_passed_worksheet(worksheet=worksheet, row=row, column=column, obj=obj)
 
     def get_work_sheets(self):
-        print('@get_work_sheets')
         return [
             ('grades', self.workbook.add_worksheet(name=ugettext('Grades'))),
             ('points', self.workbook.add_worksheet(name=ugettext('Points'))),
@@ -149,7 +127,6 @@ class AllResultsExcelReportGenerator(AbstractExcelReportGenerator):
         ]
 
     def generate(self, file_like_object):
-        print('@generate')
         current_language = translation.get_language()
         activate_translation_for_user(user=self.devilry_report.generated_by_user)
         self.write(file_like_object=file_like_object)

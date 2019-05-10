@@ -203,9 +203,10 @@ class RelatedStudentsAllResultsOverview(FilterListMixin, listbuilderview.View):
     def get_context_data(self, **kwargs):
         context = super(RelatedStudentsAllResultsOverview, self).get_context_data(**kwargs)
         context['report_options'] = json.dumps({
-            'generator_type': 'semesterstudentresults',
+            'generator_type': 'semesterstudentresults', 
             'generator_options': {
-                'period_id': self.request.cradmin_role.id
+                'period_id': self.request.cradmin_role.id,
+                'anonymized': False
             }
         })
         return context
@@ -221,7 +222,4 @@ class App(crapp.App):
         crapp.Url(r'^download-report$',
                   DownloadReportView.as_view(),
                   name='download_report'),
-        crapp.Url(r'^download-anonymized-report$',
-                  DownloadAnonymizedReportView.as_view(),
-                  name='download_anonymized_report'),
     ]

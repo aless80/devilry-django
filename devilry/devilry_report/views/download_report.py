@@ -91,6 +91,7 @@ class DownloadReportView(generic.FormView):
     ###############################
     def form_valid(self, form):
         report_options = form.cleaned_data['report_options']
+        print('download_report.py > form_valid > report_options=',report_options) #ALE 
         self.devilry_report = DevilryReport(
             generator_type=report_options['generator_type'],
             generator_options=report_options['generator_options'],

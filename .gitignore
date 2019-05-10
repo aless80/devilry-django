@@ -1,7 +1,6 @@
 venv/
 .vscode/
 
-
 not_for_deploy/docs/_build/
 *.o
 *.pyc
