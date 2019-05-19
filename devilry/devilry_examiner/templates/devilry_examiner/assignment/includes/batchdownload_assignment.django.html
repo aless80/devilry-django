@@ -1,8 +1,9 @@
 {% load devilry_group_tags %}
 {% load cradmin_tags %}
 {% load i18n %}
-
-<div class="devilry-batchprocessed-download devilry-batchprocessed-download--none"
+assignment: {{ assignment }} - {{assignment.id }} in devilry_examiner/../batchdownload_assignment.django.html
+<div>
+  <span class="devilry-batchprocessed-download devilry-batchprocessed-download--none"
             data-ievv-jsbase-widget="devilry-download-compressed-archive"
             data-ievv-jsbase-widget-config='{
                  "apiurl": "{% cradmin_instance_url appname="download" viewname="assignment-file-download-api" content_object_id=assignment.id %}",
@@ -29,4 +30,41 @@
         </small>
         {% trans "Download assignment" %}
     </a>
+</span>
+
+<!--ALE 
+  Notice that in browser the existing button has a <a> with href to 
+       /devilry_examiner/assignment/6/download/assignment-file-download/6
+  
+  hrefs are served by the CompressedAssignmentFileDownloadView and CompressedAssignmentFileDownloadViewALE classes
+    -->
+
+<span class="devilry-batchprocessed-download devilry-batchprocessed-download--none"
+            data-ievv-jsbase-widget="devilry-download-compressed-archive"
+            data-ievv-jsbase-widget-config='{
+                 "apiurl": "{% cradmin_instance_url appname="download" viewname="assignment-file-download-ALE-api" content_object_id=assignment.id %}",
+                 "signalNameSpace": "download-assignment-ALE-{{ assignment.id }}"
+            }'>
+    <span class="devilry-batchprocessed-download__preparing-download">
+        <span class="fa fa-spinner fa-spin" aria-hidden="true"></span>
+        <span class="text-muted">{% trans "preparing download" %}</span>
+    </span>    
+    <button class="btn btn-default devilry-batchprocessed-download__startbutton"
+            data-ievv-jsbase-widget="devilry-download-compressed-archive-startbutton"
+                data-ievv-jsbase-widget-config='{
+                     "signalNameSpace": "download-assignment-ALE-{{ assignment.id }}"
+                }'>
+        {% trans "Download assignment ALE" %}
+    </button>
+    <a class="btn btn-default devilry-batchprocessed-download__downloadlink"
+            data-ievv-jsbase-widget="devilry-download-compressed-archive-ALE-downloadlink"
+            data-ievv-jsbase-widget-config='{
+                 "signalNameSpace": "download-assignment-ALE-{{ assignment.id }}"
+            }'>
+        <small class="text-muted devilry-batchprocessed-download__download-ready-message">
+            {% trans "download is ready" %}
+        </small>
+        {% trans "Download assignment ALE " %}
+    </a>
+</span>
 </div>

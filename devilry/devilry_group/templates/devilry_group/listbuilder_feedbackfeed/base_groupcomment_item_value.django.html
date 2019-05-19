@@ -9,6 +9,10 @@
 {% load i18n %}
 
 {% block content %}
+ALE ./devilry/devilry_group/templates/devilry_group/listbuilder_feedbackfeed/base_groupcomment_item_value.django.html
+- {{request.resolver_match.url_name}} - {{request.resolver_match}}
+DEBUG:
+{% debug %}
     <div class="devilry-group-feedbackfeed-comment-content">
         <p class="devilry-group-comment-meta">
             <span class="devilry-group-comment-created-by-role comment-created-by-role-text">

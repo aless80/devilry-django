@@ -534,7 +534,7 @@ class App(crapp.App):
             ensure_csrf_cookie(ExaminerFeedbackView.as_view()),
             name='feedback'),
         crapp.Url(
-            r'^public-discuss',
+            r'^public-discuss', #ALE: examiner view on student submission with feedback
             ExaminerPublicDiscussView.as_view(),
             name='public-discuss'
         ),
